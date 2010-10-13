@@ -72,7 +72,7 @@ module MongoStore
     module Rails3
       def write_entry(key, entry, options)
         expires = Time.now + options[:expires_in]
-        value = entry.value
+        value = entry.value.dup # to avoid freezing entry.value
         value = value.to_mongo if value.respond_to? :to_mongo
         begin
           collection.update({'_id' => key}, {'$set' => {'value' => value, 'expires' => expires}}, :upsert => true)
